@@ -1,13 +1,15 @@
-'use strict';
+import Express from 'express';
+import hogan from 'hogan-express';
+import path from 'path';
+import {fileURLToPath} from 'url';
+import cookieParser from 'cookie-parser';
 
-const Express = require('express');
-const path = require('path');
-const hogan = require('hogan-express');
-const cookieParser = require('cookie-parser');
+import {Permissions} from './lib/permissions.mjs';
+import {KeyCloakService} from './lib/keyCloakService.mjs';
+import {AdminClient} from './lib/adminClient.mjs';
 
-const Permissions = require('./lib/permissions');
-const KeyCloakService = require('./lib/keyCloakService');
-const AdminClient = require('./lib/adminClient');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * URL patterns for permissions. URL patterns documentation https://github.com/snd/url-pattern.
@@ -27,21 +29,21 @@ const PERMISSIONS = new Permissions([
     '/adminApi(*)',
 
     /**
-     * It is protected because of we need an access token. Better to move it to the protected area.
+     * It is protected because we need an access token. Better to move it to the protected area.
      */
     '/permissions',
     '/checkPermission'
 );
 
-let app = Express();
+const app = Express();
 
 // hogan-express configuration to render html
 app.set('view engine', 'html');
 app.engine('html', hogan);
 
-let keyCloak = new KeyCloakService(PERMISSIONS);
+const keyCloak = new KeyCloakService(PERMISSIONS);
 
-let adminClient = new AdminClient({
+const adminClient = new AdminClient({
     realm: 'CAMPAIGN_REALM',
     serverUrl: 'http://localhost:8080',
     resource: 'CAMPAIGN_CLIENT',
@@ -49,15 +51,7 @@ let adminClient = new AdminClient({
     adminPassword: 'admin'
 });
 
-configureMiddleware();
-configureRoutes();
-
-const server = app.listen(3000, function () {
-    const port = server.address().port;
-    console.log('App listening at port %s', port);
-});
-
-function configureMiddleware() {
+const configureMiddleware = () => {
     app.use(Express.static(path.join(__dirname, 'static')));
 
     // for a Keycloak token
@@ -68,7 +62,7 @@ function configureMiddleware() {
     app.use(keyCloak.middleware(logoutUrl));
 }
 
-function configureRoutes() {
+const configureRoutes = () => {
     let router = Express.Router();
     app.use('/', router);
 
@@ -85,8 +79,8 @@ function configureRoutes() {
     app.get('*', (req, res) => res.sendFile(path.join(__dirname, '/static/index.html')));
 }
 
-// this routes are used by this application
-function applicationRoutes() {
+// these routes are used by this application
+const applicationRoutes = () => {
     app.get('/login', login);
 
     app.get('/adminClient', (req, res) => renderAdminClient(res, 'we will have result here'));
@@ -113,7 +107,7 @@ function applicationRoutes() {
     });
 }
 
-function login(req, res) {
+const login = (req, res) => {
     keyCloak.loginUser(req.query.login, req.query.password, req, res).then(grant => {
         // console.log(grant.__raw);
         res.render('loginSuccess', {
@@ -126,13 +120,20 @@ function login(req, res) {
     });
 }
 
-function renderAdminClient(res, result) {
+const renderAdminClient = (res, result) => {
     res.render('adminClient', {
         result: JSON.stringify(result, null, 4)
     });
 }
 
-function showUrl(req, res) {
+const showUrl = (req, res) => {
     res.end('<a href="javascript: window.history.back()">back</a> Access acquired to ' + req.originalUrl);
 }
 
+configureMiddleware();
+configureRoutes();
+
+const server = app.listen(8888, () => {
+    const {port} = server.address();
+    console.log(`App listening at http://localhost:${port}`);
+});

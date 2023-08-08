@@ -1,6 +1,6 @@
 {
   "realm": "CAMPAIGN_REALM",
-  "auth-server-url": "http://localhost:8080/auth/",
+  "auth-server-url": "http://localhost:8080/",
   "ssl-required": "external",
   "resource": "CAMPAIGN_CLIENT",
   "verify-token-audience": true,

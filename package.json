@@ -1,25 +1,23 @@
 {
-  "name": "keycloack-nodejs-example",
+  "name": "umatest",
   "version": "1.0.0",
-  "description": "An example of integration Node.js and Keycloack",
-  "main": "app.js",
+  "description": "",
+  "main": "app.mjs",
+  "type": "module",
   "scripts": {
-    "start": "node app.js"
+    "start": "node --experimental-modules app.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/v-ladynev/keycloack-nodejs-example.git"
-  },
-  "license": "Apache-2.0",
-  "author": "V.Ladynev",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "core-js": "^2.4.1",
     "express": "*",
     "hogan-express": "*",
     "request-promise-native": "^1.0.5",
-    "jsonwebtoken": "^7.3.0",
+    "jsonwebtoken": "9.0.0",
     "keycloak-admin-client": "0.12.0",
-    "keycloak-connect": "14.0.0",
+    "keycloak-connect": "21.0.1",
     "keycloak-request-token": "^0.1.0",
     "cookie-parser": "*",
     "url-pattern": "^1.0.3"
