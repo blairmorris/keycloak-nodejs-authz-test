@@ -53,7 +53,7 @@ Password: admin
 11. Run `npm install` in the project directory to install Node.js libraries
 12. Run `npm start` to run node.js application
 
-5. Login to the application using this URL [http://localhost:3000/](http://localhost:3000/)
+5. Login to the application using this URL [http://localhost:8888/](http://localhost:3000/)
    <br>
    with any of these credentials:
 * login: admin_user, password: admin_user
