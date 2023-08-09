@@ -16,7 +16,7 @@
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "admin", "default-roles-campaign_realm" ],
+    "realmRoles" : [ "admin", "uma_authorization", "default-roles-campaign_realm" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {

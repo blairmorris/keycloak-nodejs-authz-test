@@ -1,3 +1,4 @@
+import 'express-async-errors';
 import Express from 'express';
 import hogan from 'hogan-express';
 import path from 'path';
@@ -11,6 +12,11 @@ import {AdminClient} from './lib/adminClient.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const fundingVehicles = [
+    {id: 1, name: 'Funding Vehicle 1', owner: 'admin_user'},
+    {id: 2, name: 'Funding Vehicle 2', owner: 'advertiser_user'},
+    {id: 3, name: 'Funding Vehicle 3', owner: 'analyst_user'},
+]
 /**
  * URL patterns for permissions. URL patterns documentation https://github.com/snd/url-pattern.
  */
@@ -27,6 +33,10 @@ const PERMISSIONS = new Permissions([
     '/accessDenied',
     '/adminClient',
     '/adminApi(*)',
+    '/fundingVehicles',
+    '/fundingVehicles(*)',
+    '/resources',
+    '/resources(*)',
 
     /**
      * It is protected because we need an access token. Better to move it to the protected area.
@@ -73,6 +83,39 @@ const configureRoutes = () => {
     app.use('/optimizer', showUrl);
     app.use('/reports', showUrl);
     app.use('/targets', showUrl);
+    app.get('/resources/:resourceId?', async (req, res, next) => {
+        const {access_token: {token: access_token}} = await keyCloak.keyCloak.grantManager.obtainDirectly('admin_user', 'admin_user');
+        let url = `${keyCloak.keyCloak.config.realmUrl}/authz/protection/resource_set/${req.params.resourceId || ''}`;
+        return fetch(url, {
+            method: 'GET',
+            headers: {'Authorization': `Bearer ${access_token}`},
+            credentials: 'include'
+        }).then(async result => {
+            if (result.ok) {
+                const json = await result.json();
+                if (!req.params.resourceId) {
+                    return res.json(json.map(resource => `/resources/${resource}`));
+                }
+                return res.json(json);
+            }
+            return res.status(result.status).send(result.statusMessage);
+        });
+    });
+    const fundingVehiclesRouter = Express.Router({mergeParams: true});
+    fundingVehiclesRouter.get('/', (req, res) => {
+        res.json(fundingVehicles);
+    });
+    fundingVehiclesRouter.get('/:id',
+        keyCloak.keyCloak.enforcer('fundingVehicle:view', {
+            claims: (req) => ({
+                id: [req.params.id] // ignored by any policy if in array
+            })
+        }),
+        (req, res) => {
+            res.json(fundingVehicles.find(fv => fv.id === Number(req.params.id)));
+        },
+    );
+    app.use('/fundingVehicles', fundingVehiclesRouter);
 
     applicationRoutes();
 
@@ -137,3 +180,7 @@ const server = app.listen(8888, () => {
     const {port} = server.address();
     console.log(`App listening at http://localhost:${port}`);
 });
+
+process.on('unhandledRejection', (err) => {
+    console.error(err);
+})

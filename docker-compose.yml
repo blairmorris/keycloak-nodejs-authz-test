@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:21.0.2
+    image: quay.io/keycloak/keycloak:22.0.1
     container_name: keycloak-nodejs-example-keycloak
     environment:
       KEYCLOAK_ADMIN: admin
