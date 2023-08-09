@@ -665,6 +665,25 @@
         }, {
           "name" : "scopes:create"
         } ]
+      }, {
+        "name" : "fundingVehicle",
+        "ownerManagedAccess" : true,
+        "displayName" : "",
+        "attributes" : {
+          "id" : [
+            "1"
+          ]
+        },
+        "_id" : "8b1facdd-09ec-4c4e-80ad-d998f6fbf3e7",
+        "uris" : [
+          "/fundingVehicles/1"
+        ],
+        "scopes" : [
+          {
+            "name": "view"
+          }
+        ],
+        "icon_uri" : ""
       } ],
       "policies" : [ {
         "id" : "8a579e8f-d4d5-49fd-84ed-130d2e99146b",
@@ -685,6 +704,15 @@
           "roles" : "[{\"id\":\"admin\",\"required\":false}]"
         }
       }, {
+        "id": "ae67b980-8873-4d20-8ae4-ffe5eaa80c45",
+        "name": "Analyst",
+        "type": "role",
+        "logic": "POSITIVE",
+        "decisionStrategy": "UNANIMOUS",
+        "config": {
+          "roles": "[{\"id\":\"customer-analyst\",\"required\":false}]"
+        }
+      }, {
         "id" : "98cdbaae-f42d-40b6-aecf-55f79e7916e3",
         "name" : "Admin or Advertiser or Analyst",
         "type" : "aggregate",
@@ -692,15 +720,6 @@
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
           "applyPolicies" : "[\"Admin\",\"Analyst\",\"Advertiser\"]"
-        }
-      }, {
-        "id" : "ae67b980-8873-4d20-8ae4-ffe5eaa80c45",
-        "name" : "Analyst",
-        "type" : "role",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "UNANIMOUS",
-        "config" : {
-          "roles" : "[{\"id\":\"customer-analyst\",\"required\":false}]"
         }
       }, {
         "id" : "b7708412-861b-40da-b4df-3c3a0c62ecae",
@@ -789,6 +808,18 @@
           "scopes" : "[\"scopes:create\"]",
           "applyPolicies" : "[\"Analyst\"]"
         }
+      }, {
+        "id" : "2898e7c7-2caa-415f-b6e9-933897d8c627",
+        "name" : "fundingVehicle-view",
+        "description" : "",
+        "type" : "scope",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "AFFIRMATIVE",
+        "config": {
+          "resources" : "[\"fundingVehicle\"]",
+          "scopes" : "[\"view\"]",
+          "applyPolicies" : "[\"Admin\"]"
+        }
       } ],
       "scopes" : [ {
         "id" : "041003e5-926b-4789-8762-a82f16c7f583",
@@ -796,6 +827,11 @@
       }, {
         "id" : "597a18ad-9278-429b-b952-d3106556e47f",
         "name" : "scopes:view"
+      }, {
+        "id": "9401c2ad-38aa-48b3-8285-28fb2935d304",
+        "name" : "view",
+        "iconUri" : "",
+        "displayName" : "view"
       } ],
       "decisionStrategy" : "UNANIMOUS"
     }
