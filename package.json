@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node --experimental-modules app.mjs",
+    "dev": "NODE_ENV=development node --experimental-modules --watch app.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
