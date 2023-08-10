@@ -2,7 +2,7 @@ version: '3.4'
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.1
-    container_name: keycloak-nodejs-example-keycloak
+    container_name: keycloak-nodejs-authz-test-keycloak
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin

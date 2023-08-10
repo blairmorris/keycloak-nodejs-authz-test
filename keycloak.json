@@ -1,8 +1,8 @@
 {
-  "realm": "CAMPAIGN_REALM",
+  "realm": "abs_realm",
   "auth-server-url": "http://localhost:8080/",
   "ssl-required": "external",
-  "resource": "CAMPAIGN_CLIENT",
+  "resource": "connector",
   "verify-token-audience": true,
   "credentials": {
     "secret": "ba8d8925-b924-4302-8691-e93b5e51c885"

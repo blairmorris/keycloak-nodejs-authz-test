@@ -1,6 +1,18 @@
-# keycloak-nodejs-example
+# Credit
+Base copied from https://github.com/v-ladynev/keycloak-nodejs-example
 
-This is a simply Node.js REST application with checking permissions. The code with permissions check: [keycloak-nodejs-example/app.js](app.js)
+# Changes to original source
+- Removed mySQL dependency from docker-compose and using memory store for keycloak 
+- changed project to an ES6 module, and updated all syntax to ES6
+- updated dependencies to latest versions
+- added routes for funding vehicles to test attribute level permissions and user managed access
+- changed scope names to work with keycloak-connect's enforcer middleware
+- updated default resource policy to be role based (js policies not allowed in keycloak realm upload since v18)
+- added realm data for funding vehicles, including scopes, roles, policies and permissions
+
+# keycloak-nodejs-authz-test
+
+This is a simply Node.js REST application with checking permissions. The code with permissions check: [keycloak-nodejs-authz-test/app.js](app.js)
 <br>
 Just go to the [Quick Start Section](#quick-start), if you don't want to read.
 
@@ -42,14 +54,11 @@ docker-compose up
 Username or email: admin 
 Password: admin
 ```
-5. After `Sign in`, `CAMPAIGN_REALM` has to be selected. Go to the `Clients` menu.
-![realm](doc/quick_start_01.png)
-6. Choose `CAMPAIGN_CLIENT` in the `Clients` list.
-![client](doc/quick_start_02.png)
+5. After `Sign in`, `abs_realm` has to be selected. Go to the `Clients` menu.
+6. Choose `connector` in the `Clients` list.
 7. Press on the `Installation` tab.
 8. Choose `Format Option: Keycloak OIDC JSON` and click `Download` to download `keycloak.json`
-![installation](doc/quick_start_03.png)
-10. Replace `keycloak-nodejs-example\keycloak.json` in the root of the project with the downloaded `keycloak.json`.
+10. Replace `keycloak-nodejs-authz-test\keycloak.json` in the root of the project with the downloaded `keycloak.json`.
 11. Run `npm install` in the project directory to install Node.js libraries
 12. Run `npm start` to run node.js application
 
@@ -60,153 +69,24 @@ Password: admin
 * login: advertiser_user, password: advertiser_user
 * login: analyst_user, password: analyst_user
 
-# Not All information below is correct !!!
-
 ## Keycloak Configuration
-
-### Download Keycloak
-
-Download the last version of Keycloak (this example uses 3.2.1.Final)
-http://www.keycloak.org/downloads.html
-
-### Configure Keycloak to use MySQL
-
-Perform this steps to get MySQL configured for Keycloak:
-https://www.keycloak.org/docs/latest/server_installation/index.html#_rdbms-setup-checklist
-
-**Important:** There is an error in the documentation — driver should be in the
-`modules/system/layers/base/com/mysql/driver/main` catalog. 
-
-The last MySQL driver
-https://mvnrepository.com/artifact/mysql/mysql-connector-java
-
-##### `module.xml`
-```XML
-<module xmlns="urn:jboss:module:1.3" name="com.mysql.driver">
- <resources>
-  <resource-root path="mysql-connector-java-6.0.5.jar" />
- </resources>
- <dependencies>
-  <module name="javax.api"/>
-  <module name="javax.transaction.api"/>
- </dependencies>
-</module>
-```
-
-##### `part of  standalone.xml`
-You will need to create a `keycloak` schema in the MySQL database for this example. Also don't forget to remove existing `java:jboss/datasources/KeycloakDS` datasource.
-```XML
-<datasources>
-...
-<datasource jndi-name="java:jboss/datasources/KeycloakDS" pool-name="KeycloakDS" enabled="true" use-java-context="true">
-<connection-url>jdbc:mysql://localhost:3306/keycloak</connection-url>
-    <driver>mysql</driver>
-    <pool>
-        <max-pool-size>20</max-pool-size>
-    </pool>
-    <security>
-        <user-name>root</user-name>
-        <password>root</password>
-    </security>
-</datasource>
-...
-</datasources>
-
-<drivers>
-...
-<driver name="mysql" module="com.mysql.driver">
-    <driver-class>com.mysql.jdbc.Driver</driver-class>
-</driver>
-...
-</drivers>
-```
-
-To fix time zone error during startup, `connection-url` can be
-`jdbc:mysql://localhost:3306/keycloak?serverTimezone=UTC`
-
-Database schema creation takes a long time. 
 
 ### Import Users, Realm, Client and Polices
 Realm, Client and Polices configuration can be imported using this file:
-[CAMPAIGN_REALM-realm.json](https://github.com/v-ladynev/keycloak-nodejs-example/blob/master/import_realm_json/CAMPAIGN_REALM-realm.json)
+[abs_realm-realm.json](https://github.com/blairmorris/keycloak-nodejs-authz-test/blob/master/import_realm_json/CAMPAIGN_REALM-realm.json)
 
 Users can be imported from this file:
-[CAMPAIGN_REALM-users-0.json](https://github.com/v-ladynev/keycloak-nodejs-example/blob/master/import_realm_json/CAMPAIGN_REALM-users-0.json)
-
-#### Import via Keycloak UI
-
-You will need to select a file on the `Add Realm` page to import a realm .
-https://www.keycloak.org/docs/latest/server_admin/index.html#_create-realm
-
-Users can be imported via `Manage -> Import`
+[abs_realm-users-0.json](https://github.com/blairmorris/keycloak-nodejs-authz-test/blob/master/import_realm_json/CAMPAIGN_REALM-users-0.json)
 
 #### Import at server boot time
 Export and import is triggered at server boot time and its parameters are passed in via Java system properties. 
 https://www.keycloak.org/docs/latest/server_admin/index.html#_export_import
 
-### Basic configuration
-
-1. Run server using standalone.sh (standalone.bat)
-
-2. You should now have the Keycloak server up and running. 
-To check that it's working open [http://localhost:8080](http://localhost:8080). 
-You will need to create a Keycloak admin user:
-click on `Administration Console` [http://localhost:8080/auth/admin/](http://localhost:8080/auth/admin/)
-
-// TODO
-When you boot Keycloak for the first time Keycloak creates a pre-defined realm for you. 
-This initial realm is the master realm. 
-It is the highest level in the hierarchy of realms. 
-Admin accounts in this realm have permissions to view and manage any other realm created on the server instance. 
-When you define your initial admin account, you create an account in the master realm. 
-Your initial login to the admin console will also be via the master realm.
-https://www.keycloak.org/docs/latest/server_admin/index.html#the-master-realm
-
-3. Create a `CAMPAIGN_REALM` realm https://www.keycloak.org/docs/latest/server_admin/index.html#_create-realm
-
-4. Create realm roles: `admin`, `customer-advertiser`, `customer-analyst`
-https://www.keycloak.org/docs/latest/server_admin/index.html#realm-roles<br><br>
-*Noitice*: Each client can have their own "client roles", scoped only to the client
-https://www.keycloak.org/docs/latest/server_admin/index.html#client-roles
-
-5. Create users
-https://www.keycloak.org/docs/latest/server_admin/index.html#_create-new-user
-<br>
- * Click `Add User` button, specify user's login and click `Save` button 
- * After that, to specify a user's password go to the Credentials tab (don't forget to disable `Temporary` password)
-
-Add these users:
-  * login: `admin_user`, password: `admin_user`
-  * login: `advertiser_user`, password: `advertiser_user`
-  * login: `analyst_user`, password: `analyst_user` 
-
-6. Add roles to users: 
-* `admin_user` — `admin`
-* `advertiser_user` — `customer-advertiser`
-* `analyst_user` — `customer-analyst`
-<br>
-https://www.keycloak.org/docs/latest/server_admin/index.html#user-role-mappings
-
-7. Create an OIDC client `CAMPAIGN_CLIENT`
-https://www.keycloak.org/docs/latest/server_admin/index.html#oidc-clients
-
-  * Client ID:  `CAMPAIGN_CLIENT`
-  * Client Protocol: `openid-connect`
-  * Access Type:  `Confidential`
-  * Standard Flow Enabled: `ON`
-  * Implicit Flow Enabled: `OFF`
-  * Direct Access Grants Enabled: `ON` **Important**: it should be `ON` for the custom login (to provide login/password via this example application login page) 
-  * Service Accounts Enabled: `ON` 
-  * Authorization Enabled: `ON` **Important**: to add polices
-  * Valid Redirect URIs: `http://localhost:3000/*`. Keycloak will use this value to check redirect URL at least for logout.
-  It can be just a wildcard `*`.
-  * Web Origins: `*`
-
 ### Configure permissions
 
 #### Add polices
 
-Using `Authorization -> Policies` add role based polices to the `CAMPAIGN_CLIENT` 
+Using `Authorization -> Policies` add role based polices to the `connector` 
 https://www.keycloak.org/docs/latest/authorization_services/index.html#_policy_rbac
 
 | Policy Name                    | Role                |
@@ -220,25 +100,25 @@ Aggregated Policy*
 This policy consist of an aggregation of other polices
 https://www.keycloak.org/docs/latest/authorization_services/index.html#_policy_aggregated  
   
-* Polycy name: `Admin or Advertiser or Analyst`
+* Policy name: `Admin or Advertiser or Analyst`
 * Apply Policy: `Admin`, `Advertiser`, `Analyst`
 * Decision Strategy: `Affirmative`
  
  #### Add scopes
  
 Using `Authorization -> Authorization Scopes` add scopes
-  * scopes:create
-  * scopes:view  
+* create
+* view  
 
 #### Add resources
 
-Using `Authorization -> Resources` add resourcess. Scopes should be entered in the `Scopes` field for every resource.
+Using `Authorization -> Resources` add resources. Scopes should be entered in the `Scopes` field for every resource.
 
-| Resource Name | Scopes                     |
-|---------------|----------------------------|
-| res:campaign  | scopes:create, scopes:view |
-| res:customer  | scopes:create, scopes:view |
-| res:report    | scopes:create, scopes:view |
+| Resource Name | Scopes                 |
+|---------------|------------------------|
+| campaign      | create, view           |
+| customer      | create, view           |
+| report        | create, view           |
 
 Enter `Rsource Name` column value to the `Name` and `Display Name` fields 
 
@@ -250,23 +130,23 @@ https://www.keycloak.org/docs/latest/authorization_services/index.html#_permissi
 Set *decision strategy* for every permission 
 * Decision Strategy: `Affirmative`
 
-|    Permission   |   Resource   |     Scope     |                     Polices                  |
-|:---------------:|:------------:|:-------------:|:--------------------------------------------:|
-| customer-create | res:customer | scopes:create | Admin                                        |
-| customer-view   | res:customer | scopes:view   | Admin or Advertiser or Analyst               |
-| campaign-create | res:campaign | scopes:create | Admin, Advertiser                            |
-| campaign-view   | res:campaign | scopes:view   | Admin or Advertiser or Analyst               |
-| report-create   | res:report   | scopes:create | Analyst                                      |
-| report-view     | res:report   | scopes:view   | Admin or Advertiser or Analyst               |
+|    Permission     |  Resource  |  Scope   |               Polices                |
+|:-----------------:|:----------:|:--------:|:------------------------------------:|
+|  customer-create  |  customer  |  create  |                Admin                 |
+|   customer-view   |  customer  |   view   |    Admin or Advertiser or Analyst    |
+|  campaign-create  |  campaign  |  create  |          Admin, Advertiser           |
+|   campaign-view   |  campaign  |   view   |    Admin or Advertiser or Analyst    |
+|   report-create   |   report   |  create  |               Analyst                |
+|    report-view    |   report   |   view   |    Admin or Advertiser or Analyst    |
 
 10. Download `keycloak.json` using `CAMPAIGN_CLIENT -> Installation` :
 https://www.keycloak.org/docs/latest/securing_apps/index.html#_nodejs_adapter
 
 ### Download and run application
 
-1. Clone this project https://github.com/v-ladynev/keycloak-nodejs-example.git
+1. Clone this project https://github.com/blairmorris/keycloak-nodejs-authz-test.git
 
-2. Replace `keycloak.json` in the [root of this project](https://github.com/v-ladynev/keycloak-nodejs-example/blob/master/keycloak.json)
+2. Replace `keycloak.json` in the [root of this project](https://github.com/blairmorris/keycloak-nodejs-authz-test/blob/master/keycloak.json)
 with downloaded `keycloak.json`.
 
 3. Run `npm install` in the project directory to install Node.js libraries
@@ -292,70 +172,6 @@ http://stackoverflow.com/a/32890003/3405171
 
 ## Keycloak docker image
 
-### Using official jboss/keycloak-mysql with MySQL on localhost 
-
-You shold have MySQL runing on `localhost` with `KEYCLOAK_DEV` database, and `login=root password=root` 
-
-```shell
-sudo docker run --name keycloak_dev \
---network="host" \
--e MYSQL_PORT_3306_TCP_ADDR=localhost -e MYSQL_PORT_3306_TCP_PORT=3306 \
--e MYSQL_DATABASE=KEYCLOAK_DEV -e MYSQL_USERNAME=root -e MYSQL_PASSWORD=root \ 
--e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin \
-jboss/keycloak-mysql 
-```
-This creates a Keycloak `admin` user with password `admin`. 
-Keycloak will run on `localhost:8080`. You will need to add users, roles and permissions manually.
-
-### Using ladynev/keycloak-mysql-realm-users with MySQL on localhost
-
-```shell
-sudo docker run --name keycloak_dev \
---network="host" \
--e MYSQL_PORT_3306_TCP_ADDR=localhost -e MYSQL_PORT_3306_TCP_PORT=3306 \
--e MYSQL_DATABASE=KEYCLOAK_DEV -e MYSQL_USERNAME=root -e MYSQL_PASSWORD=root \
--e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin \
-ladynev/keycloak-mysql-realm-users
-```
-This creates a Keycloak `admin` user with password `admin`. 
-Keycloak will run on `localhost:8080`. It will already have predefined users, roles and permissions from this example, because
-of `ladynev/keycloak-mysql-realm-users` image imports this data from [json files](https://github.com/v-ladynev/keycloak-nodejs-example/tree/master/docker/import_realm_users) during start up.
-
-### Using ladynev/keycloak-mysql-realm-users with MySQL docker image 
-
- 1.  First start a MySQL instance using the MySQL docker image:
- 
-     ```shell
-     sudo docker run --name mysql \
-     -e MYSQL_DATABASE=KEYCLOAK_DEV -e MYSQL_USER=keycloak -e MYSQL_PASSWORD=keycloak \
-     -e MYSQL_ROOT_PASSWORD=root_password \
-     -d mysql
-     ```
- 
- 2. Start a Keycloak instance and connect to the MySQL instance:
-    
-    ```shell
-    sudo docker run --name keycloak_dev \
-    --link mysql:mysql \
-    -p 8080:8080 \
-    -e MYSQL_DATABASE=KEYCLOAK_DEV -e MYSQL_USERNAME=keycloak -e MYSQL_PASSWORD=keycloak \
-    -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin \
-    ladynev/keycloak-mysql-realm-users
-    ```
-
-This creates a Keycloak `admin` user with password `admin` and imports users, roles, permissions.
-
- 3. Get IP address of `ladynev/keycloak-mysql-realm-users` container
-    
-    ```shell
-    sudo docker network inspect bridge
-    ```
-  
- 4. Keycloak will run on `ip_address:8080`. For example: http://172.17.0.3:8080 (for Windows it looks like http://192.168.99.100:8080)
- 
- 5. To run `keycloak-nodejs-example`, it is need to fix `keycloak.json` with server IP-address.
-    Other option is generate`keycloak.json` with Keycloak UI `CAMPAIGN_CLIENT -> Installation`. 
-
 ### Build docker image from the root of the project
 
 ```shell
@@ -375,8 +191,8 @@ docker push ladynev/keycloak-mysql-realm-users
 ### Example of custom login 
 
 Keycloak, by default, uses an own page to login a user. There is an example, how to use an application login page.
-`Direct Access Grants` should be enabled in that case (https://github.com/v-ladynev/keycloak-nodejs-example#basic-configuration)
-The file [app.js](https://github.com/v-ladynev/keycloak-nodejs-example/blob/master/app.js)
+`Direct Access Grants` should be enabled in that case (https://github.com/blairmorris/keycloak-nodejs-authz-test#basic-configuration)
+The file [app.js](https://github.com/blairmorris/keycloak-nodejs-authz-test/blob/master/app.js)
  
 ```javascript 
  app.get('/customLoginEnter', function (req, res) {
@@ -395,7 +211,7 @@ The file [app.js](https://github.com/v-ladynev/keycloak-nodejs-example/blob/mast
 To perform custom login we need to obtain tokens from Keycloak. We can do this by HTTP request:
 ```shell
 curl -X POST \
-  http://localhost:8080/auth/realms/CAMPAIGN_REALM/protocol/openid-connect/token \
+  http://localhost:8080/auth/realms/abs_realm/protocol/openid-connect/token \
   -H 'authorization: Basic Q0FNUEFJR05fQ0xJRU5UOjZkOTc5YmU1LWNiODEtNGQ1Yy05ZmM3LTQ1ZDFiMGM3YTc1ZQ==' \
   -H 'content-type: application/x-www-form-urlencoded' \
   -d 'client_id=CAMPAIGN_CLIENT&username=admin_user&password=admin_user&grant_type=password'
@@ -433,7 +249,7 @@ if we decode `access_token` (using https://jwt.io/), we will have (there are rol
   "exp": 1509476280,
   "nbf": 0,
   "iat": 1509475980,
-  "iss": "http://localhost:8080/auth/realms/CAMPAIGN_REALM",
+  "iss": "http://localhost:8080/auth/realms/abs_realm",
   "aud": "CAMPAIGN_CLIENT",
   "sub": "5dc300c9-86c8-4995-b2b9-368f9049ba3f",
   "typ": "Bearer",
@@ -463,10 +279,10 @@ if we decode `access_token` (using https://jwt.io/), we will have (there are rol
 }
 ```
 ### Examples of Admin REST API 
-The file [adminClient.js](https://github.com/v-ladynev/keycloak-nodejs-example/blob/master/lib/adminClient.js)
+The file [adminClient.js](https://github.com/blairmorris/keycloak-nodejs-authz-test/blob/master/lib/adminClient.js)
 
   * Realms list
-  * Users list for `CAMPAIGN_REALM`
+  * Users list for `abs_realm`
   * Create user `test_user` (password: `test_user`)
   * Get user `test_user`
   * Delete user `test_user`
@@ -504,8 +320,6 @@ https://stackoverflow.com/questions/12276046/nodejs-express-how-to-secure-a-url
 [Obtain access token for user](https://www.keycloak.org/docs/latest/server_development/index.html#admin-rest-api)
 <br>
 [Stop using JWT for sessions](http://cryto.net/~joepie91/blog/2016/06/13/stop-using-jwt-for-sessions/)
-<br>
-[Integrating Keycloak 4 with Spring Boot 2 Microservices](https://github.com/jinnerbichler/blog/tree/master/keycloak_4_spring_boot_2)
 <br>
 [Video Keycloak intro part 2 - Resources, Permissions, Scope and Policies](https://www.youtube.com/watch?v=3K77Pvv-ouU)
 <br>

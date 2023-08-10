@@ -1,15 +1,20 @@
 {
   "name": "umatest",
   "version": "1.0.0",
-  "description": "",
+  "description": "Testing Keycloak authz capabilities",
+  "private": true,
   "main": "app.mjs",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "github:blairmorris/keycloak-nodejs-authz-test"
+  },
   "scripts": {
     "start": "node --experimental-modules app.mjs",
     "dev": "NODE_ENV=development node --experimental-modules --watch app.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Blair Morris<e.blair.morris@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "cookie-parser": "*",
