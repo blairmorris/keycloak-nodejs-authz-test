@@ -1,6 +1,6 @@
 {
-  "id" : "CAMPAIGN_REALM",
-  "realm" : "CAMPAIGN_REALM",
+  "id" : "abs_realm",
+  "realm" : "abs_realm",
   "notBefore" : 0,
   "defaultSignatureAlgorithm" : "RS256",
   "revokeRefreshToken" : false,
@@ -50,7 +50,7 @@
       "description" : "${role_offline-access}",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "CAMPAIGN_REALM",
+      "containerId" : "abs_realm",
       "attributes" : { }
     }, {
       "id" : "ffcd2bfc-273e-4a2d-83b6-5f280fff48a3",
@@ -58,32 +58,32 @@
       "description" : "${role_uma_authorization}",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "CAMPAIGN_REALM",
+      "containerId" : "abs_realm",
       "attributes" : { }
     }, {
       "id" : "6b1683dd-6eee-4497-ae70-d44c0cba01b2",
       "name" : "customer-advertiser",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "CAMPAIGN_REALM",
+      "containerId" : "abs_realm",
       "attributes" : { }
     }, {
       "id" : "b674b0fb-9e0c-4b88-8fc6-293283ff5876",
       "name" : "customer-analyst",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "CAMPAIGN_REALM",
+      "containerId" : "abs_realm",
       "attributes" : { }
     }, {
       "id" : "225d7ceb-4bc6-40d1-ba5d-d56f6ad99790",
       "name" : "admin",
       "composite" : false,
       "clientRole" : false,
-      "containerId" : "CAMPAIGN_REALM",
+      "containerId" : "abs_realm",
       "attributes" : { }
     }, {
       "id" : "b312b39b-01fa-49bc-8528-66e4e076f750",
-      "name" : "default-roles-campaign_realm",
+      "name" : "default-roles-abs_realm",
       "description" : "${role_default-roles}",
       "composite" : true,
       "composites" : {
@@ -93,11 +93,11 @@
         }
       },
       "clientRole" : false,
-      "containerId" : "CAMPAIGN_REALM",
+      "containerId" : "abs_realm",
       "attributes" : { }
     } ],
     "client" : {
-      "CAMPAIGN_CLIENT" : [ {
+      "connector" : [ {
         "id" : "da60aa33-6933-415c-8445-0bebb1c61808",
         "name" : "uma_protection",
         "composite" : false,
@@ -357,11 +357,11 @@
   "groups" : [ ],
   "defaultRole" : {
     "id" : "b312b39b-01fa-49bc-8528-66e4e076f750",
-    "name" : "default-roles-campaign_realm",
+    "name" : "default-roles-abs_realm",
     "description" : "${role_default-roles}",
     "composite" : true,
     "clientRole" : false,
-    "containerId" : "CAMPAIGN_REALM"
+    "containerId" : "abs_realm"
   },
   "requiredCredentials" : [ "password" ],
   "otpPolicyType" : "totp",
@@ -406,12 +406,12 @@
     "clientId" : "account",
     "name" : "${client_account}",
     "rootUrl" : "${authBaseUrl}",
-    "baseUrl" : "/realms/CAMPAIGN_REALM/account/",
+    "baseUrl" : "/realms/abs_realm/account/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ "/realms/CAMPAIGN_REALM/account/*" ],
+    "redirectUris" : [ "/realms/abs_realm/account/*" ],
     "webOrigins" : [ ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -434,12 +434,12 @@
     "clientId" : "account-console",
     "name" : "${client_account-console}",
     "rootUrl" : "${authBaseUrl}",
-    "baseUrl" : "/realms/CAMPAIGN_REALM/account/",
+    "baseUrl" : "/realms/abs_realm/account/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ "/realms/CAMPAIGN_REALM/account/*" ],
+    "redirectUris" : [ "/realms/abs_realm/account/*" ],
     "webOrigins" : [ ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -521,7 +521,7 @@
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
     "id" : "a33d7b80-43a8-42bb-8053-232f5936678d",
-    "clientId" : "CAMPAIGN_CLIENT",
+    "clientId" : "connector",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
@@ -594,12 +594,12 @@
       }
     }, {
       "id" : "3c3ced81-78eb-4ef4-aba6-819a3dd6110e",
-      "name" : "campaign-client-audience",
+      "name" : "connector-audience",
       "protocol" : "openid-connect",
       "protocolMapper" : "oidc-audience-mapper",
       "consentRequired" : false,
       "config" : {
-        "included.client.audience" : "CAMPAIGN_CLIENT",
+        "included.client.audience" : "connector",
         "id.token.claim" : "false",
         "access.token.claim" : "true"
       }
@@ -617,66 +617,99 @@
         "jsonType.label" : "String"
       }
     } ],
-    "defaultClientScopes" : [ "web-origins", "campaign_client_scope", "profile", "roles", "email" ],
+    "defaultClientScopes" : [ "web-origins", "connector_scope", "profile", "roles", "email" ],
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ],
     "authorizationSettings" : {
       "allowRemoteResourceManagement" : true,
       "policyEnforcementMode" : "ENFORCING",
       "resources" : [ {
-        "name" : "res:campaign",
+        "name" : "campaign",
         "ownerManagedAccess" : false,
-        "displayName" : "res:campaign",
+        "displayName" : "campaign",
         "attributes" : { },
         "_id" : "01b4be27-7530-41b0-a382-de8d5d83b0cf",
         "uris" : [ ],
         "scopes" : [ {
-          "name" : "scopes:view"
+          "name" : "view"
         }, {
-          "name" : "scopes:create"
+          "name" : "create"
         } ]
       }, {
         "name" : "Default Resource",
-        "type" : "urn:CAMPAIGN_CLIENT:resources:default",
+        "type" : "urn:connector:resources:default",
+        "displayName" : "Default Resource",
         "ownerManagedAccess" : false,
         "attributes" : { },
         "_id" : "734d6c09-b8ca-43bc-a339-0b2e08465ee9",
         "uris" : [ "/*" ]
       }, {
-        "name" : "res:report",
+        "name" : "report",
         "ownerManagedAccess" : false,
-        "displayName" : "res:report",
+        "displayName" : "report",
         "attributes" : { },
         "_id" : "7e360ccc-dbe5-485e-8065-885e5503cfcc",
         "uris" : [ ],
         "scopes" : [ {
-          "name" : "scopes:view"
+          "name" : "view"
         }, {
-          "name" : "scopes:create"
+          "name" : "create"
         } ]
       }, {
-        "name" : "res:customer",
+        "name" : "customer",
         "ownerManagedAccess" : false,
-        "displayName" : "res:customer",
+        "displayName" : "customer",
         "attributes" : { },
         "_id" : "fe86a814-8c2a-4789-ab2e-1ae35b1da5c4",
         "uris" : [ ],
         "scopes" : [ {
-          "name" : "scopes:view"
+          "name" : "view"
         }, {
-          "name" : "scopes:create"
+          "name" : "create"
         } ]
       }, {
         "name" : "fundingVehicle",
+        "type" : "urn:connector:resources:fundingVehicle",
+        "ownerManagedAccess" : false,
+        "displayName" : "Funding Vehicle",
+        "attributes" : { },
+        "_id" : "8b1facdd-09ec-4c4e-80ad-d998f6fbf3e8",
+        "uris" : [
+          "/fundingVehicles"
+        ],
+        "scopes" : [
+          {
+            "name": "view"
+          }
+        ],
+        "icon_uri" : ""
+      }, {
+        "name" : "fv1",
+        "type" : "urn:connector:resources:fundingVehicle",
         "ownerManagedAccess" : true,
-        "displayName" : "",
-        "attributes" : {
-          "id" : [
-            "1"
-          ]
+        "displayName" : "fv1",
+        "attributes" : { },
+        "owner" : {
+          "name" : "admin_user"
         },
         "_id" : "8b1facdd-09ec-4c4e-80ad-d998f6fbf3e7",
         "uris" : [
           "/fundingVehicles/1"
+        ],
+        "scopes" : [
+          {
+            "name": "view"
+          }
+        ],
+        "icon_uri" : ""
+      }, {
+        "name" : "fv2",
+        "type" : "urn:connector:resources:fundingVehicle",
+        "ownerManagedAccess" : true,
+        "displayName" : "fv2",
+        "attributes" : { },
+        "_id" : "a6cae31c-33ab-4994-8b4d-57d1e8a0f61f",
+        "uris" : [
+          "/fundingVehicles/2"
         ],
         "scopes" : [
           {
@@ -729,7 +762,7 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "roles": "[{\"id\":\"default-roles-campaign_realm\",\"required\":false}]"
+          "roles": "[{\"id\":\"default-roles-abs_realm\",\"required\":false}]"
         }
       }, {
         "id" : "155d5c38-b197-4b96-9ad7-67045347be12",
@@ -739,7 +772,7 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "UNANIMOUS",
         "config" : {
-          "defaultResourceType" : "urn:CAMPAIGN_CLIENT:resources:default",
+          "defaultResourceType" : "urn:connector:resources:default",
           "applyPolicies" : "[\"Default Policy\"]"
         }
       }, {
@@ -749,8 +782,8 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:report\"]",
-          "scopes" : "[\"scopes:view\"]",
+          "resources" : "[\"report\"]",
+          "scopes" : "[\"view\"]",
           "applyPolicies" : "[\"Admin or Advertiser or Analyst\"]"
         }
       }, {
@@ -760,8 +793,8 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:campaign\"]",
-          "scopes" : "[\"scopes:view\"]",
+          "resources" : "[\"campaign\"]",
+          "scopes" : "[\"view\"]",
           "applyPolicies" : "[\"Admin or Advertiser or Analyst\"]"
         }
       }, {
@@ -771,8 +804,8 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:customer\"]",
-          "scopes" : "[\"scopes:view\"]",
+          "resources" : "[\"customer\"]",
+          "scopes" : "[\"view\"]",
           "applyPolicies" : "[\"Admin or Advertiser or Analyst\"]"
         }
       }, {
@@ -782,53 +815,28 @@
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
         "config" : {
-          "resources" : "[\"res:customer\"]",
-          "scopes" : "[\"scopes:create\"]",
+          "resources" : "[\"customer\"]",
+          "scopes" : "[\"create\"]",
           "applyPolicies" : "[\"Admin\"]"
         }
       }, {
-        "id" : "bc54130e-6e37-477a-be9b-9da6951d775d",
-        "name" : "campaign-create",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "AFFIRMATIVE",
-        "config" : {
-          "resources" : "[\"res:campaign\"]",
-          "scopes" : "[\"scopes:create\"]",
-          "applyPolicies" : "[\"Admin\",\"Advertiser\"]"
-        }
-      }, {
-        "id" : "ecee4d1c-d6e2-489f-9a71-ce165fd1f78f",
-        "name" : "report-create",
-        "type" : "scope",
-        "logic" : "POSITIVE",
-        "decisionStrategy" : "AFFIRMATIVE",
-        "config" : {
-          "resources" : "[\"res:report\"]",
-          "scopes" : "[\"scopes:create\"]",
-          "applyPolicies" : "[\"Analyst\"]"
-        }
-      }, {
-        "id" : "2898e7c7-2caa-415f-b6e9-933897d8c627",
+        "id" : "f38ba589-9be3-4ec3-a61d-2a59b2f4451f",
         "name" : "fundingVehicle-view",
         "description" : "",
         "type" : "scope",
         "logic" : "POSITIVE",
         "decisionStrategy" : "AFFIRMATIVE",
-        "config": {
-          "resources" : "[\"fundingVehicle\"]",
+        "config" : {
+          "defaultResourceType" : "urn:connector:resources:fundingVehicle",
           "scopes" : "[\"view\"]",
           "applyPolicies" : "[\"Admin\"]"
         }
       } ],
       "scopes" : [ {
         "id" : "041003e5-926b-4789-8762-a82f16c7f583",
-        "name" : "scopes:create"
+        "name" : "create"
       }, {
-        "id" : "597a18ad-9278-429b-b952-d3106556e47f",
-        "name" : "scopes:view"
-      }, {
-        "id": "9401c2ad-38aa-48b3-8285-28fb2935d304",
+        "id" : "9401c2ad-38aa-48b3-8285-28fb2935d304",
         "name" : "view",
         "iconUri" : "",
         "displayName" : "view"
@@ -866,12 +874,12 @@
     "clientId" : "security-admin-console",
     "name" : "${client_security-admin-console}",
     "rootUrl" : "${authAdminUrl}",
-    "baseUrl" : "/admin/CAMPAIGN_REALM/console/",
+    "baseUrl" : "/admin/abs_realm/console/",
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
-    "redirectUris" : [ "/admin/CAMPAIGN_REALM/console/*" ],
+    "redirectUris" : [ "/admin/abs_realm/console/*" ],
     "webOrigins" : [ "+" ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -1113,7 +1121,7 @@
     } ]
   }, {
     "id" : "c772094d-19ec-43c1-862e-d941b30593c8",
-    "name" : "campaign_client_scope",
+    "name" : "connector_scope",
     "protocol" : "openid-connect",
     "attributes" : {
       "include.in.token.scope" : "true",
@@ -2058,8 +2066,8 @@
     "oauth2DevicePollingInterval" : "5",
     "cibaInterval" : "5"
   },
-  "keycloakVersion" : "14.0.0",
-  "userManagedAccessAllowed" : false,
+  "keycloakVersion" : "21.0.1",
+  "userManagedAccessAllowed" : true,
   "clientProfiles" : {
     "profiles" : [ ]
   },

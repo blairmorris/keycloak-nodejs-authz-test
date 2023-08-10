@@ -21,19 +21,19 @@ const fundingVehicles = [
  * URL patterns for permissions. URL patterns documentation https://github.com/snd/url-pattern.
  */
 const PERMISSIONS = new Permissions([
-    ['/customers', 'post', 'res:customer', 'scopes:create'],
-    ['/customers(*)', 'get', 'res:customer', 'scopes:view'],
-    ['/campaigns', 'post', 'res:campaign', 'scopes:create'],
-    ['/campaigns(*)', 'get', 'res:campaign', 'scopes:view'],
-    ['/reports', 'post', 'res:report', 'scopes:create'],
-    ['/reports(*)', 'get', 'res:report', 'scopes:view']
+    ['/customers', 'post', 'customer', 'create'],
+    ['/customers(*)', 'get', 'customer', 'view'],
+    ['/campaigns', 'post', 'campaign', 'create'],
+    ['/campaigns(*)', 'get', 'campaign', 'view'],
+    ['/reports', 'post', 'report', 'create'],
+    ['/reports(*)', 'get', 'report', 'view'],
+    ['/fundingVehicles', 'get', 'fundingVehicle', 'view'],
 ]).notProtect(
     '/favicon.ico', // just to not log requests
     '/login(*)',
     '/accessDenied',
     '/adminClient',
     '/adminApi(*)',
-    '/fundingVehicles',
     '/fundingVehicles(*)',
     '/resources',
     '/resources(*)',
@@ -102,15 +102,14 @@ const configureRoutes = () => {
         });
     });
     const fundingVehiclesRouter = Express.Router({mergeParams: true});
-    fundingVehiclesRouter.get('/', (req, res) => {
+    fundingVehiclesRouter.get('/', keyCloak.keyCloak.enforcer('fundingVehicle:view'), (req, res) => {
         res.json(fundingVehicles);
     });
     fundingVehiclesRouter.get('/:id',
-        keyCloak.keyCloak.enforcer('fundingVehicle:view', {
-            claims: (req) => ({
-                id: [req.params.id] // ignored by any policy if in array
-            })
-        }),
+        (req, res, next) => {
+            const permission = `fv${req.params.id}:view`;
+            return keyCloak.keyCloak.enforcer(permission)(req, res, next);
+        },
         (req, res) => {
             res.json(fundingVehicles.find(fv => fv.id === Number(req.params.id)));
         },
