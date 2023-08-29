@@ -1,0 +1,9 @@
+{
+  "policies": [
+    {
+      "name": "Resource Owner Policy",
+      "fileName": "resource-owner-policy.js",
+      "description": "Resource Owner policy file"
+    }
+  ]
+}

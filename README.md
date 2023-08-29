@@ -10,6 +10,12 @@ Base copied from https://github.com/v-ladynev/keycloak-nodejs-example
 - updated default resource policy to be role based (js policies not allowed in keycloak realm upload since v18)
 - added realm data for funding vehicles, including scopes, roles, policies and permissions
 
+# To edit custom JS policy "resource owner"
+You must bundle the policy into a jar file and copy it to the keycloak docker image
+```shell
+(cd ./testpolicy && zip -r ../docker/providers/keycloak-scripts.jar .)
+```
+
 # keycloak-nodejs-authz-test
 
 This is a simply Node.js REST application with checking permissions. The code with permissions check: [keycloak-nodejs-authz-test/app.js](app.js)

@@ -706,6 +706,9 @@
         "type" : "urn:connector:resources:fundingVehicle",
         "ownerManagedAccess" : true,
         "displayName" : "fv2",
+        "owner": {
+          "name": "advertiser_user"
+        },
         "attributes" : { },
         "_id" : "a6cae31c-33ab-4994-8b4d-57d1e8a0f61f",
         "uris" : [
@@ -717,8 +720,37 @@
           }
         ],
         "icon_uri" : ""
+      },
+      {
+        "name" : "fv3",
+        "type" : "urn:connector:resources:fundingVehicle",
+        "ownerManagedAccess" : true,
+        "displayName" : "fv3",
+        "attributes" : { },
+        "owner": {
+          "name": "analyst_user"
+        },
+        "_id" : "a6cae31c-33ab-4994-8b4d-57d1e8a0f62a",
+        "uris" : [
+          "/fundingVehicles/3"
+        ],
+        "scopes" : [
+          {
+            "name": "view"
+          }
+        ],
+        "icon_uri" : ""
       } ],
       "policies" : [ {
+        "id": "473615eb-5ef8-44d0-b6bd-b6adfe70be0b",
+        "name": "owner",
+        "description": "Resource owner policy",
+        "type": "script-resource-owner-policy.js",
+        "logic": "POSITIVE",
+        "decisionStrategy": "UNANIMOUS",
+        "config": {}
+      },
+      {
         "id" : "8a579e8f-d4d5-49fd-84ed-130d2e99146b",
         "name" : "Advertiser",
         "type" : "role",
@@ -829,7 +861,7 @@
         "config" : {
           "defaultResourceType" : "urn:connector:resources:fundingVehicle",
           "scopes" : "[\"view\"]",
-          "applyPolicies" : "[\"Admin\"]"
+          "applyPolicies" : "[\"owner\",\"Admin\"]"
         }
       } ],
       "scopes" : [ {

@@ -14,3 +14,4 @@ services:
       - 8080:8080
     volumes:
       - "./docker/import_realm_users:/opt/keycloak/data/import"
+      - "./docker/providers:/opt/keycloak/providers"

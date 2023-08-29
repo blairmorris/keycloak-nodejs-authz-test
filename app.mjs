@@ -111,9 +111,24 @@ const configureRoutes = () => {
             return keyCloak.keyCloak.enforcer(permission)(req, res, next);
         },
         (req, res) => {
+            console.log(req.permissions)
             res.json(fundingVehicles.find(fv => fv.id === Number(req.params.id)));
         },
     );
+    // fundingVehiclesRouter.get('/:id',
+    //     (req, res, next) => keyCloak.keyCloak.enforcer(
+    //         ['fundingVehicle:view'], {
+    //         claims: function(request) {
+    //             return {
+    //                 "fvId": [request.params.id]
+    //             }
+    //         }
+    //     })(req, res, next),
+    //     (req, res) => {
+    //         console.log(req.permissions)
+    //         res.json(fundingVehicles.find(fv => fv.id === Number(req.params.id)));
+    //     },
+    // );
     app.use('/fundingVehicles', fundingVehiclesRouter);
 
     applicationRoutes();
